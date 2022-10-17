@@ -33,46 +33,66 @@ const operatorDivs = document.querySelectorAll(".operator");
 const resultDiv = document.querySelector(".result");
 const equalBtn = document.querySelector(".equal");
 
-let value = 0;
-resultDiv.innerText = value;
+resultDiv.innerText = "0";
+let num1 = "";
+let num2 = "";
+let operator = "";
+let isOperatorSelected = false;
+let num2Flag = false;
+let isNum1Result = false;
 
-const checkOperator = (str) => {
-  const char = str.split(" ")[1];
-  if (isNaN(char) && char != undefined) {
-    return true;
-  }
-
-  return false;
+const returnDefault = () => {
+  num2Flag = false;
+  isNum1Result = false;
 };
 
-const display = (event) => {
-  value = event.target.innerText;
+const displayNumber = (event) => {
+  const result = resultDiv.innerText;
+  console.log(result);
 
-  if (checkOperator(resultDiv.innerText)) {
-    resultDiv.innerText += ` ${value}`;
+  if (result == 0 || num2Flag == true || isNum1Result == true) {
+    resultDiv.innerText = event.target.innerText;
+    returnDefault();
   } else {
-    resultDiv.innerText = value;
+    resultDiv.innerText += event.target.innerText;
   }
+
+  if (isOperatorSelected == false) {
+    num1 = resultDiv.innerText;
+  } else {
+    num2 = resultDiv.innerText;
+  }
+  console.log("Num1: " + num1 + " Num2: " + num2 + " Operator: " + operator);
 };
 
-digitDivs.forEach((digit) => {
-  digit.addEventListener("click", display);
+digitDivs.forEach((digitDiv) => {
+  digitDiv.addEventListener("click", displayNumber);
 });
 
-operatorDivs.forEach((operator) => {
-  operator.addEventListener("click", (event) => {
-    if (checkOperator(resultDiv.innerText)) {
-      return;
-    }
-    resultDiv.innerText += ` ${event.target.innerText}`;
+const setOperator = (event) => {
+  operator = event.target.innerText;
+  isOperatorSelected = true;
+  isNum1Result = false;
+  num2Flag = true;
+};
+
+operatorDivs.forEach((operatorDiv) => {
+  operatorDiv.addEventListener("click", (event) => {
+    setOperator(event);
+    displayResult();
   });
 });
 
-equalBtn.addEventListener("click", () => {
-  const temp = resultDiv.innerText.split(" ");
-  let num1 = temp[0];
-  let num2 = temp[2];
-  let operator = temp[1];
+const displayResult = () => {
+  if (isOperatorSelected && num1 != "" && num2 != "") {
+    resultDiv.innerText = operate(operator, num1, num2);
+    num1 = resultDiv.innerText;
+    num2 = "";
+  }
+};
 
-  resultDiv.innerText = operate(operator, num1, num2);
+equalBtn.addEventListener("click", () => {
+  displayResult();
+  console.log("Num1: " + num1 + " Num2: " + num2 + " Operator: " + operator);
+  returnDefault();
 });
