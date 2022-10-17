@@ -39,20 +39,14 @@ let num2 = "";
 let operator = "";
 let isOperatorSelected = false;
 let num2Flag = false;
-let isNum1Result = false;
-
-const returnDefault = () => {
-  num2Flag = false;
-  isNum1Result = false;
-};
 
 const displayNumber = (event) => {
   const result = resultDiv.innerText;
   console.log(result);
 
-  if (result == 0 || num2Flag == true || isNum1Result == true) {
+  if (result == 0 || num2Flag == true) {
     resultDiv.innerText = event.target.innerText;
-    returnDefault();
+    num2Flag = false;
   } else {
     resultDiv.innerText += event.target.innerText;
   }
@@ -72,14 +66,13 @@ digitDivs.forEach((digitDiv) => {
 const setOperator = (event) => {
   operator = event.target.innerText;
   isOperatorSelected = true;
-  isNum1Result = false;
   num2Flag = true;
 };
 
 operatorDivs.forEach((operatorDiv) => {
   operatorDiv.addEventListener("click", (event) => {
-    setOperator(event);
     displayResult();
+    setOperator(event);
   });
 });
 
@@ -93,6 +86,4 @@ const displayResult = () => {
 
 equalBtn.addEventListener("click", () => {
   displayResult();
-  console.log("Num1: " + num1 + " Num2: " + num2 + " Operator: " + operator);
-  returnDefault();
 });
