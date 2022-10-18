@@ -32,9 +32,10 @@ const digitDivs = document.querySelectorAll(".digit");
 const operatorDivs = document.querySelectorAll(".operator");
 const resultDiv = document.querySelector(".result");
 const equalBtn = document.querySelector(".equal");
+const clearBtn = document.querySelector(".clear");
 
 resultDiv.innerText = "0";
-let num1 = "";
+let num1 = resultDiv.innerText;
 let num2 = "";
 let operator = "";
 let isOperatorSelected = false;
@@ -42,7 +43,6 @@ let num2Flag = false;
 
 const displayNumber = (event) => {
   const result = resultDiv.innerText;
-  console.log(result);
 
   if (result == 0 || num2Flag == true) {
     resultDiv.innerText = event.target.innerText;
@@ -65,6 +65,7 @@ digitDivs.forEach((digitDiv) => {
 
 const setOperator = (event) => {
   operator = event.target.innerText;
+  console.log(operator + " selected");
   isOperatorSelected = true;
   num2Flag = true;
 };
@@ -78,12 +79,23 @@ operatorDivs.forEach((operatorDiv) => {
 
 const displayResult = () => {
   if (isOperatorSelected && num1 != "" && num2 != "") {
-    resultDiv.innerText = operate(operator, num1, num2);
+    resultDiv.innerText = parseFloat(operate(operator, num1, num2).toFixed(6));
     num1 = resultDiv.innerText;
     num2 = "";
+    num2Flag = true;
   }
 };
 
-equalBtn.addEventListener("click", () => {
-  displayResult();
-});
+equalBtn.addEventListener("click", displayResult);
+
+const clearCalculator = () => {
+  resultDiv.innerText = "0";
+  num1 = resultDiv.innerText;
+  num2 = "";
+  operator = "";
+  isOperatorSelected = false;
+  num2Flag = false;
+  console.log("Num1: " + num1 + " Num2: " + num2 + " Operator: " + operator);
+};
+
+clearBtn.addEventListener("click", clearCalculator);
