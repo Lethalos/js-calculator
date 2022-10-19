@@ -17,6 +17,7 @@ const divide = (num1, num2) => {
 const operate = (operator, num1, num2) => {
   num1 = Number(num1);
   num2 = Number(num2);
+  console.log(num1 + " " + num2);
   if (operator == "+") {
     return add(num1, num2);
   } else if (operator == "-") {
@@ -32,6 +33,7 @@ const digitDivs = document.querySelectorAll(".digit");
 const operatorDivs = document.querySelectorAll(".operator");
 const resultDiv = document.querySelector(".result");
 const equalBtn = document.querySelector(".equal");
+const floatBtn = document.querySelector(".floating-point");
 const clearBtn = document.querySelector(".clear");
 
 resultDiv.innerText = "0";
@@ -44,7 +46,7 @@ let num2Flag = false;
 const displayNumber = (event) => {
   const result = resultDiv.innerText;
 
-  if (result == 0 || num2Flag == true) {
+  if ((result == 0 && result.length == 1) || num2Flag == true) {
     resultDiv.innerText = event.target.innerText;
     num2Flag = false;
   } else {
@@ -64,7 +66,7 @@ digitDivs.forEach((digitDiv) => {
 });
 
 const setOperator = (event) => {
-  operator = event.target.innerText;
+  operator = event.target.getAttribute("data-operator");
   console.log(operator + " selected");
   isOperatorSelected = true;
   num2Flag = true;
@@ -99,3 +101,13 @@ const clearCalculator = () => {
 };
 
 clearBtn.addEventListener("click", clearCalculator);
+
+const displayFloatingPoint = () => {
+  const regex = /\./;
+  if (regex.test(resultDiv.innerText)) {
+    return;
+  }
+  resultDiv.innerText += ".";
+};
+
+floatBtn.addEventListener("click", displayFloatingPoint);
