@@ -19,25 +19,27 @@ body {
 button {
   padding: 1rem 2rem;
   font-size: 1.5rem;
-  background-color: #333;
   color: #fff;
+  border: none;
+  cursor: pointer;
 }
 
 .calculator {
-  width: 600px;
+  width: 500px;
   border: 10px solid #333;
   border-radius: 0.5rem;
   padding: 1rem;
 
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .result-section {
   display: flex;
   justify-content: flex-end;
-  background-color: rgb(102, 102, 102);
+  background-color: #666666;
+  border-radius: 0.5rem;
 }
 
 .result {
@@ -46,12 +48,45 @@ button {
   font-size: 3rem;
 }
 
+.buttons-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
 .buttons-section .row {
   display: flex;
+  gap: 3px;
 }
 
 .buttons-section .row button {
   flex: 1;
+}
+
+.buttons-section .row button:hover {
+  background-color: #666666 !important;
+}
+
+.buttons-section .row button:active {
+  background-color: #a6a6a6 !important;
+}
+
+.digit {
+  background-color: #333;
+}
+
+.backspace,
+.floating-point,
+.equal {
+  background-color: steelblue;
+}
+
+.clear {
+  background-color: coral;
+}
+
+.operator {
+  background-color: #8b3e8c;
 }
 
 .floating-point {

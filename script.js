@@ -17,7 +17,7 @@ const divide = (num1, num2) => {
 const operate = (operator, num1, num2) => {
   num1 = Number(num1);
   num2 = Number(num2);
-  console.log(num1 + " " + num2);
+
   if (operator == "+") {
     return add(num1, num2);
   } else if (operator == "-") {
@@ -35,30 +35,34 @@ const resultDiv = document.querySelector(".result");
 const equalBtn = document.querySelector(".equal");
 const floatBtn = document.querySelector(".floating-point");
 const clearBtn = document.querySelector(".clear");
+const backspaceBtn = document.querySelector(".backspace");
 
 resultDiv.innerText = "0";
 let num1 = resultDiv.innerText;
 let num2 = "";
 let operator = "";
 let isOperatorSelected = false;
-let num2Flag = false;
+let newNumberFlag = false;
 
-const displayNumber = (event) => {
-  const result = resultDiv.innerText;
-
-  if ((result == 0 && result.length == 1) || num2Flag == true) {
-    resultDiv.innerText = event.target.innerText;
-    num2Flag = false;
-  } else {
-    resultDiv.innerText += event.target.innerText;
-  }
-
+const updateNumber = (isOperatorSelected) => {
   if (isOperatorSelected == false) {
     num1 = resultDiv.innerText;
   } else {
     num2 = resultDiv.innerText;
   }
-  console.log("Num1: " + num1 + " Num2: " + num2 + " Operator: " + operator);
+};
+
+const displayNumber = (event) => {
+  const result = resultDiv.innerText;
+
+  if ((result == 0 && result.length == 1) || newNumberFlag == true) {
+    resultDiv.innerText = event.target.innerText;
+    newNumberFlag = false;
+  } else {
+    resultDiv.innerText += event.target.innerText;
+  }
+
+  updateNumber(isOperatorSelected);
 };
 
 digitDivs.forEach((digitDiv) => {
@@ -67,16 +71,30 @@ digitDivs.forEach((digitDiv) => {
 
 const setOperator = (event) => {
   operator = event.target.getAttribute("data-operator");
-  console.log(operator + " selected");
   isOperatorSelected = true;
-  num2Flag = true;
+  newNumberFlag = true;
+};
+
+const setOperatorColor = (event) => {
+  operatorDivs.forEach(
+    (operatorDiv) => (operatorDiv.style.backgroundColor = "#8b3e8c")
+  );
+
+  if (event != undefined) {
+    event.currentTarget.style.backgroundColor = "#611863";
+  }
 };
 
 operatorDivs.forEach((operatorDiv) => {
-  operatorDiv.addEventListener("click", (event) => {
-    displayResult();
-    setOperator(event);
-  });
+  operatorDiv.addEventListener(
+    "click",
+    (event) => {
+      displayResult();
+      setOperator(event);
+      setOperatorColor(event);
+    },
+    false
+  );
 });
 
 const displayResult = () => {
@@ -84,7 +102,10 @@ const displayResult = () => {
     resultDiv.innerText = parseFloat(operate(operator, num1, num2).toFixed(6));
     num1 = resultDiv.innerText;
     num2 = "";
-    num2Flag = true;
+    newNumberFlag = true;
+    operator = "";
+    isOperatorSelected = false;
+    setOperatorColor();
   }
 };
 
@@ -96,18 +117,41 @@ const clearCalculator = () => {
   num2 = "";
   operator = "";
   isOperatorSelected = false;
-  num2Flag = false;
-  console.log("Num1: " + num1 + " Num2: " + num2 + " Operator: " + operator);
+  newNumberFlag = false;
+  setOperatorColor();
 };
 
 clearBtn.addEventListener("click", clearCalculator);
 
 const displayFloatingPoint = () => {
-  const regex = /\./;
-  if (regex.test(resultDiv.innerText)) {
+  if (newNumberFlag == true) {
+    resultDiv.innerText = "0.";
+    newNumberFlag = false;
     return;
   }
+
+  if (/\./.test(resultDiv.innerText)) {
+    return;
+  }
+
   resultDiv.innerText += ".";
 };
 
 floatBtn.addEventListener("click", displayFloatingPoint);
+
+backspaceBtn.addEventListener("click", () => {
+  if (resultDiv.innerText.length == 1) {
+    resultDiv.innerText = 0;
+    updateNumber(isOperatorSelected);
+    return;
+  }
+
+  if (resultDiv.innerText[resultDiv.innerText.length - 2] == ".") {
+    resultDiv.innerText = resultDiv.innerText.slice(0, -2);
+    updateNumber(isOperatorSelected);
+    return;
+  }
+
+  resultDiv.innerText = resultDiv.innerText.slice(0, -1);
+  updateNumber(isOperatorSelected);
+});
