@@ -1,3 +1,24 @@
+window.addEventListener("keydown", (event) => {
+  const numRegex = /[0-9]/;
+  const operatorRegex = /[+\-*\/]/;
+
+  if (numRegex.test(event.key)) {
+    displayNumber(event);
+  } else if (operatorRegex.test(event.key)) {
+    displayResult();
+    setOperator(event);
+    setOperatorColor(event);
+  } else if (event.key == "Enter") {
+    displayResult();
+  } else if (event.key == "." || event.key == ",") {
+    displayFloatingPoint();
+  } else if (event.key == "Escape") {
+    clearCalculator();
+  } else if (event.key == "Backspace") {
+    displayBackspace();
+  }
+});
+
 const add = (num1, num2) => {
   return num1 + num2;
 };
@@ -53,13 +74,21 @@ const updateNumber = (isOperatorSelected) => {
 };
 
 const displayNumber = (event) => {
-  const result = resultDiv.innerText;
+  let numberToDisplayed;
+  if (event.type == "keydown") {
+    numberToDisplayed = event.key;
+  } else {
+    numberToDisplayed = event.target.innerText;
+  }
 
-  if ((result == 0 && result.length == 1) || newNumberFlag == true) {
-    resultDiv.innerText = event.target.innerText;
+  if (
+    (resultDiv.innerText == 0 && resultDiv.innerText.length == 1) ||
+    newNumberFlag == true
+  ) {
+    resultDiv.innerText = numberToDisplayed;
     newNumberFlag = false;
   } else {
-    resultDiv.innerText += event.target.innerText;
+    resultDiv.innerText += numberToDisplayed;
   }
 
   updateNumber(isOperatorSelected);
@@ -70,7 +99,11 @@ digitDivs.forEach((digitDiv) => {
 });
 
 const setOperator = (event) => {
-  operator = event.target.getAttribute("data-operator");
+  if (event.type == "keydown") {
+    operator = event.key;
+  } else {
+    operator = event.target.getAttribute("data-operator");
+  }
   isOperatorSelected = true;
   newNumberFlag = true;
 };
@@ -80,7 +113,7 @@ const setOperatorColor = (event) => {
     (operatorDiv) => (operatorDiv.style.backgroundColor = "#8b3e8c")
   );
 
-  if (event != undefined) {
+  if (event != undefined && event.type != "keydown") {
     event.currentTarget.style.backgroundColor = "#611863";
   }
 };
@@ -111,18 +144,6 @@ const displayResult = () => {
 
 equalBtn.addEventListener("click", displayResult);
 
-const clearCalculator = () => {
-  resultDiv.innerText = "0";
-  num1 = resultDiv.innerText;
-  num2 = "";
-  operator = "";
-  isOperatorSelected = false;
-  newNumberFlag = false;
-  setOperatorColor();
-};
-
-clearBtn.addEventListener("click", clearCalculator);
-
 const displayFloatingPoint = () => {
   if (newNumberFlag == true) {
     resultDiv.innerText = "0.";
@@ -139,7 +160,19 @@ const displayFloatingPoint = () => {
 
 floatBtn.addEventListener("click", displayFloatingPoint);
 
-backspaceBtn.addEventListener("click", () => {
+const clearCalculator = () => {
+  resultDiv.innerText = "0";
+  num1 = resultDiv.innerText;
+  num2 = "";
+  operator = "";
+  isOperatorSelected = false;
+  newNumberFlag = false;
+  setOperatorColor();
+};
+
+clearBtn.addEventListener("click", clearCalculator);
+
+const displayBackspace = () => {
   if (resultDiv.innerText.length == 1) {
     resultDiv.innerText = 0;
     updateNumber(isOperatorSelected);
@@ -154,4 +187,6 @@ backspaceBtn.addEventListener("click", () => {
 
   resultDiv.innerText = resultDiv.innerText.slice(0, -1);
   updateNumber(isOperatorSelected);
-});
+};
+
+backspaceBtn.addEventListener("click", displayBackspace);
