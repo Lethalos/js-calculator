@@ -64,6 +64,7 @@ let num2 = "";
 let operator = "";
 let isOperatorSelected = false;
 let newNumberFlag = false;
+let isReachMaxNumLimit = false;
 
 const updateNumber = (isOperatorSelected) => {
   if (isOperatorSelected == false) {
@@ -74,6 +75,10 @@ const updateNumber = (isOperatorSelected) => {
 };
 
 const displayNumber = (event) => {
+  if (isReachMaxNumLimit == true && newNumberFlag == false) {
+    return;
+  }
+
   let numberToDisplayed;
   if (event.type == "keydown") {
     numberToDisplayed = event.key;
@@ -92,6 +97,12 @@ const displayNumber = (event) => {
   }
 
   updateNumber(isOperatorSelected);
+
+  if (resultDiv.innerText.length > 20) {
+    isReachMaxNumLimit = true;
+  } else {
+    isReachMaxNumLimit = false;
+  }
 };
 
 digitDivs.forEach((digitDiv) => {
@@ -119,32 +130,36 @@ const setOperatorColor = (event) => {
 };
 
 operatorDivs.forEach((operatorDiv) => {
-  operatorDiv.addEventListener(
-    "click",
-    (event) => {
-      displayResult();
-      setOperator(event);
-      setOperatorColor(event);
-    },
-    false
-  );
+  operatorDiv.addEventListener("click", (event) => {
+    displayResult();
+    setOperator(event);
+    setOperatorColor(event);
+  });
 });
 
 const displayResult = () => {
   if (isOperatorSelected && num1 != "" && num2 != "") {
-    resultDiv.innerText = parseFloat(operate(operator, num1, num2).toFixed(6));
+    let resultNumber = parseFloat(
+      operate(operator, num1, num2).toFixed(6)
+    ).toString();
+    resultDiv.innerText = resultNumber;
     num1 = resultDiv.innerText;
     num2 = "";
     newNumberFlag = true;
     operator = "";
     isOperatorSelected = false;
     setOperatorColor();
+    isReachMaxNumLimit = false;
   }
 };
 
 equalBtn.addEventListener("click", displayResult);
 
 const displayFloatingPoint = () => {
+  if (isReachMaxNumLimit == true) {
+    return;
+  }
+
   if (newNumberFlag == true) {
     resultDiv.innerText = "0.";
     newNumberFlag = false;
@@ -156,6 +171,12 @@ const displayFloatingPoint = () => {
   }
 
   resultDiv.innerText += ".";
+
+  if (resultDiv.innerText.length > 20) {
+    isReachMaxNumLimit = true;
+  } else {
+    isReachMaxNumLimit = false;
+  }
 };
 
 floatBtn.addEventListener("click", displayFloatingPoint);
@@ -168,6 +189,7 @@ const clearCalculator = () => {
   isOperatorSelected = false;
   newNumberFlag = false;
   setOperatorColor();
+  isReachMaxNumLimit = false;
 };
 
 clearBtn.addEventListener("click", clearCalculator);
@@ -187,6 +209,7 @@ const displayBackspace = () => {
 
   resultDiv.innerText = resultDiv.innerText.slice(0, -1);
   updateNumber(isOperatorSelected);
+  isReachMaxNumLimit = false;
 };
 
 backspaceBtn.addEventListener("click", displayBackspace);
